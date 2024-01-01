@@ -15,33 +15,10 @@ char savefiles[10][14] = {
   "savefile10.bin"
 };
 
-void updateHistory(gameState * game, gameState history[], int counter) {
-  history[counter].flagComp = game -> flagComp;
-  history[counter].size = game -> size;
-  history[counter].turn = game -> turn;
-  history[counter].score1 = game -> score1;
-  history[counter].score2 = game -> score2;
-  history[counter].cellsFilled = game -> cellsFilled;
-  strcpy(history[counter].player1Name, game -> player1Name);
-  strcpy(history[counter].player2Name, game -> player2Name);
-  for (int i = 0; i < game -> size; i++) {
-    for (int j = 0; j < game -> size; j++) {
-      history[counter].cells[i][j] = game -> cells[i][j];
-    }
-  }
+// compile command: gcc main.c functions.c saveLoad.c leaderboard.c dfs.c -o DotsAndBoxes
 
-}
-void debugHistory(gameState history[], int historySize) {
-  for (int i = 0; i < historySize; i++) {
-    for (int j = 0; j < history[i].size; j++) {
-      for (int x = 0; x < history[i].size; x++) {
-        printf("%d %d %d %d", history[i].cells[j][x].up, history[i].cells[j][x].bottom, history[i].cells[j][x].left, history[i].cells[j][x].right);
-      }
-    }
-    printf("\n");
-  }
 
-}
+
 int gameLoop(gameState * game, int size, int historySize, int loaded) {
   int mode;
   if (loaded == 0) {
@@ -140,6 +117,9 @@ int gameLoop(gameState * game, int size, int historySize, int loaded) {
 
   }
 }
+
+
+
 
 int main() {
   while (1) {
