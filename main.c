@@ -2,6 +2,8 @@
 #include "saveLoad.h"
 #include "leaderboard.h"
 
+// Compile command: gcc main.c functions.c saveLoad.c leaderboard.c dfs.c undoRedo.c display.c -o DotsAndBoxes
+
 char savefiles[10][14] = {
   "savefile1.bin",
   "savefile2.bin",
@@ -15,7 +17,6 @@ char savefiles[10][14] = {
   "savefile10.bin"
 };
 
-// compile command: gcc main.c functions.c saveLoad.c leaderboard.c dfs.c -o DotsAndBoxes
 
 
 
@@ -103,12 +104,22 @@ int gameLoop(gameState * game, int size, int historySize, int loaded) {
     } else if (typeofMove == '3') {
       redo(game, history, & counter);
     } else if (typeofMove == '4') {
+      char n_char;
       int n;
-      printf("Which File?\n");
-      scanf("%d", & n);
-      saveGameState(savefiles[n - 1], game);
+      printf(MAGENTA "FILE NUMBER : \n" RESET);
+       while (getchar() != '\n');
+      scanf("%c", & n_char);
+      if (n>=1 && n<=10)
+      {
+         saveGameState(savefiles[n - 1], game);
+      }
+      else{
+        printf("invalid filename ... returning to the game \n\n");
+        continue;
+      }
+     
     } else if (typeofMove == '5') {
-      printf("Exiting :()");
+      printf("Exiting :( \n");
       exit(0);
     }
     clock_t endTime = clock();
@@ -151,32 +162,39 @@ int main() {
       displayLeaderboard();
     } else if (order == '4') {
       gameState * game = (gameState * ) malloc(sizeof(gameState));
+      char n_char ;
       int n;
-      printf(YELLOW "File number: \n"
-        RESET);
-      scanf("%d", & n);
-      if (n > 0 && n <= 10) {
-        loadGameState(savefiles[n - 1], game);
-        replay = gameLoop(game, game -> size, 61, 1);
-        free(game->cells);
-        free(game);
-      } else {
-        system("cls");
-        printf("File not found\n");
-        continue;
-      }
+      do
+      {
+        printf(YELLOW "File number: \n" RESET);
+         while (getchar() != '\n');
+        scanf("%c", & n_char);
+        n = n_char - '0' ;
+        if(n>=1 && n<=10)
+        {
+          loadGameState(savefiles[n - 1], game);
+          replay = gameLoop(game, game -> size, 61, 1);
+          free(game->cells);
+          free(game);
+          break;
+        }
+        else{
+          system("cls");
+          printf("Enter a valid number between 1-10\n");
+        }
+        
+      } while (1);
       if (replay == 1) {
         system("cls");
         continue;
       }
-      // printf("y");
+      
       free(game);
     } else if (order == '5') {
       printf("Come Again Later <3\n");
       return 0;
     } else {
-      printf(RED "invalid Command\n"
-        RESET);
+      printf(RED "invalid Command\n" RESET);
       return 1;
     }
 

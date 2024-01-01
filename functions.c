@@ -1,61 +1,5 @@
 #include "functions.h"
 
-void printData(gameState*currentGame)
-{
-    printf("\n");
-    printf(RED"%s score: %d\n"RESET,currentGame->player1Name,currentGame->score1);
-    printf(BLUE"%s score: %d\n"RESET,currentGame->player2Name,currentGame->score2);
-    printf(YELLOW"Cells Left: %d\n"RESET,currentGame->size*currentGame->size-currentGame->cellsFilled);
-    printf(YELLOW"Time Passed: %d\n"RESET,currentGame->time);
-}
-
-
-void undo(gameState *currentGame, gameState history[], int *count)
-{
-    if ((*count) > 0 )
-    {
-                (*count)--;
-                printf("UNDOO");
-                currentGame->score1 = history[*count].score1;
-                currentGame->score2 = history[*count].score2;
-                currentGame->cellsFilled = history[*count].cellsFilled;
-                strcpy(currentGame->player1Name , history[*count].player1Name);
-                strcpy(currentGame->player2Name , history[*count].player2Name);
-                for(int i = 0 ; i<currentGame->size ; i++)
-                {
-                    for(int j = 0 ; j<currentGame->size ; j++)
-                    {
-                        currentGame->cells[i][j] = history[*count].cells[i][j];
-                    }
-                }
-    }
-    else{
-        printf("No valid Undo");
-    }
-
-}
-
-void redo(gameState *currentGame, gameState history[], int *count)
-{
-    if (history[(*count) + 1].turn != 0)
-    {
-        (*count)++;
-        currentGame->score1 = history[*count].score1;
-        currentGame->score2 = history[*count].score2;
-        currentGame->cellsFilled = history[*count].cellsFilled;
-        strcpy(currentGame->player1Name , history[*count].player1Name);
-        strcpy(currentGame->player2Name , history[*count].player2Name);
-        for(int i = 0 ; i<currentGame->size ; i++)
-        {
-            for(int j = 0 ; j<currentGame->size ; j++)
-            {
-                currentGame->cells[i][j] = history[*count].cells[i][j];
-            }
-        }
-        
-
-    }
-}
 
 void scanNames(gameState *game) {
     printf("Player 1 name: ");
@@ -78,12 +22,7 @@ void scanNames(gameState *game) {
     }
 }
 
-char printMenuAndGetCommand() {
-    char command;
-    printf(MAGENTA"   DOTS AND BOXES\n"RESET CYAN"\n1)2X2\n2)5x5\n3)leaderboard\n4)Load\n5)Exit Game\n"RESET);
-    scanf(" %c", &command);
-    return command;
-}
+
 
 void createArr(gameState *game , int size) { //create 2d array of cells
     game->cells = (cell **)malloc(size * sizeof(cell *));
@@ -101,71 +40,7 @@ void initializeGameState(gameState *game) { //initialize the game state at the b
     game->cellsFilled = 0;
 }
 
-void printBoard(cell **cells, int size) {
-    for (int i = 0; i < size; i++) {
-        for (int j = 0; j < size; j++) {
-            printf("+");
-            if (cells[i][j].up == 1) {
-                printf( RED "---------" RESET );
-            } else if (cells[i][j].up == 2) {
-                printf( BLUE "---------" RESET );
-            } else {
-                printf("         ");
-            }
-        }
-        printf("+\n");
-        for(int x = 0 ; x<3 ; x++)
-        {
-            for (int j = 0; j < size; j++) {
-            if (cells[i][j].left == 1) {
-                if(cells[i][j].fillCount == 4)
-                {
-                    printf(RED "|"RESET  RED_BACKGROUND"         " COLOR_RESET);
-                }
-                else
-                {
-                    printf(RED "|         " RESET);
-                }
-                
-            } else if (cells[i][j].left == 2) {
-                if(cells[i][j].fillCount == 4)
-                {
-                    printf(BLUE "|"RESET  BLUE_BACKGROUND"         " COLOR_RESET);
-                }
-                else
-                {
-                    printf(BLUE "|         " RESET);
-                }
-                
-            } else {
-                printf("          ");
-            }
 
-            if (cells[i][j].right == 1 && j == size - 1) {
-                printf(RED "|" RESET);
-            } else if (cells[i][j].right == 2 && j == size - 1) {
-                printf(BLUE "|" RESET);
-            } 
-        }
-
-        printf("\n");
-        }
-        if (i == size - 1) {
-            for (int j = 0; j < size; j++) {
-                printf("+");
-                if (cells[i][j].bottom == 1) {
-                    printf(RED "---------" RESET);
-                } else if (cells[i][j].bottom == 2) {
-                    printf(BLUE "---------" RESET);
-                }
-                else{
-                    printf("         ");
-                }
-            }
-            printf("+");
-        }
-    }
-}
 
 int checkCellFull(gameState *currentGame, int i, int j) {
     if (currentGame->cells[i][j].fillCount == 4) {
@@ -313,46 +188,46 @@ void currentGameTurn(gameState *currentGame,gameState history[], int count ) {
       
 
     }
-    void placeLine (gameState*currentGame, int i , int j , char k )
-    {
-        int flag = 0;
-        int size = currentGame->size ;
-        if (k == 'u') {
-            currentGame->cells[i][j].up = currentGame->turn;
-            if (i != 0) {
-                currentGame->cells[i - 1][j].bottom = currentGame->turn;
-                currentGame->cells[i - 1][j].fillCount++;
-                flag = checkCellFull(currentGame,i-1,j);
-                
-            }
-        } else if (k == 'b') {
-            currentGame->cells[i][j].bottom = currentGame->turn;
-            if (i != size - 1) {
-                currentGame->cells[i + 1][j].up = currentGame->turn;
-                currentGame->cells[i + 1][j].fillCount++;
-                flag = checkCellFull(currentGame,i+1,j);
-            }
-        } else if (k == 'r') {
-            currentGame->cells[i][j].right = currentGame->turn;
-            if (j != size - 1) {
-                currentGame->cells[i][j + 1].left = currentGame->turn;
-                currentGame->cells[i][j + 1].fillCount++;
-                flag = checkCellFull(currentGame,i,j+1);
-            }
-        } else if (k == 'l') {
-            currentGame->cells[i][j].left = currentGame->turn;
-            if (j != 0) {  // Fix: Check if j is not at the beginning of the row
-                currentGame->cells[i][j - 1].right = currentGame->turn;
-                currentGame->cells[i][j - 1].fillCount++;
-                flag = checkCellFull(currentGame,i,j-1);
-            }
+void placeLine (gameState*currentGame, int i , int j , char k )
+{
+    int flag = 0;
+    int size = currentGame->size ;
+    if (k == 'u') {
+        currentGame->cells[i][j].up = currentGame->turn;
+        if (i != 0) {
+            currentGame->cells[i - 1][j].bottom = currentGame->turn;
+            currentGame->cells[i - 1][j].fillCount++;
+            flag = checkCellFull(currentGame,i-1,j);
+            
         }
-        currentGame->cells[i][j].fillCount++;
-        if (!(checkCellFull(currentGame, i, j) || flag )) {
-            currentGame->turn = (currentGame->turn == 1) ? 2 : 1;
+    } else if (k == 'b') {
+        currentGame->cells[i][j].bottom = currentGame->turn;
+        if (i != size - 1) {
+            currentGame->cells[i + 1][j].up = currentGame->turn;
+            currentGame->cells[i + 1][j].fillCount++;
+            flag = checkCellFull(currentGame,i+1,j);
         }
-
+    } else if (k == 'r') {
+        currentGame->cells[i][j].right = currentGame->turn;
+        if (j != size - 1) {
+            currentGame->cells[i][j + 1].left = currentGame->turn;
+            currentGame->cells[i][j + 1].fillCount++;
+            flag = checkCellFull(currentGame,i,j+1);
+        }
+    } else if (k == 'l') {
+        currentGame->cells[i][j].left = currentGame->turn;
+        if (j != 0) {  // Fix: Check if j is not at the beginning of the row
+            currentGame->cells[i][j - 1].right = currentGame->turn;
+            currentGame->cells[i][j - 1].fillCount++;
+            flag = checkCellFull(currentGame,i,j-1);
+        }
     }
+    currentGame->cells[i][j].fillCount++;
+    if (!(checkCellFull(currentGame, i, j) || flag )) {
+        currentGame->turn = (currentGame->turn == 1) ? 2 : 1;
+    }
+
+}
 
 int computerTurn(gameState*currentGame, int target)
 {

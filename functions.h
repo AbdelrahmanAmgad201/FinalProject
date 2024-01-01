@@ -9,35 +9,23 @@
 #include "dataStructure.h"
 #include "colors.h"
 #include "dfs.h"
+#include "undoRedo.h"
+#include "display.h"
+#include "saveLoad.h"
+#include "leaderboard.h"
+
 void updateHistory(gameState * game, gameState history[], int counter);
 
-void printData(gameState * currentGame);
-
 int computerTurn(gameState * currentGame, int target);
-
-
-void saveWinner(const char * name, int score);
 
 void placeLine(gameState * currentGame, int i, int j, char k);
 
 
-void CheckForChain(gameState * currentGame, int i, int j);
-
-void checkforempty(gameState * currentGame, int i, int j);
-
-void undo(gameState * currentGame, gameState history[], int * count);
-
-void redo(gameState * currentGame, gameState history[], int * count);
-
 void scanNames(gameState * game);
-
-char printMenuAndGetCommand();
 
 void createArr(gameState * game, int size);
 
 void initializeGameState(gameState * game);
-
-void printBoard(cell ** cells, int size);
 
 int checkCellFull(gameState * currentGame, int i, int j);
 
